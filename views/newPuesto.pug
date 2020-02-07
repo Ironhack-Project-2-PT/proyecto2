@@ -1,35 +1,111 @@
-extends layout
-block content
-  .uk-section
-    .uk-container.uk-container-small
-      form(action="/tatoo/new"  enctype="multipart/form-data" method="post")
-        fieldset.uk-fieldset
-          if errorMessage
-            .uk-flex.uk-flex-center.uk-alert-danger.uk-width-1-1(uk-alert)
-              p.authErr #{errorMessage}
-          .uk-margin
-            label(class="uk-form-label" for="exec_time") Name
-            input.uk-input(type='text', placeholder='Name for tatoo' name="name")
-          .uk-margin
-            label(class="uk-form-label" for="price") Price
-            input.uk-input(type='text', placeholder='Price' name="price")
-          .uk-margin
-            label(class="uk-form-label" for="currency") Currency
-            select.uk-select(name="currency")
-              option(value="MXN") MXN
-              option(value="USD") USD 
-          .uk-margin
-            label(class="uk-form-label" for="exec_time") Execution Time
-            select.uk-select(name="exec_time")
-              option(value="1") 1 Hour
-              option(value="1.5") 1.5 Hours
-              option(value="2") 2.0 Hours
-              option(value="2.5") 2.5 Hours
-              option(value="3") 3 Hours
-          .uk-margin
-            textarea.uk-textarea(rows='5', placeholder='Short description for tatoo' name="description")
-          .uk-margin(uk-margin='')
-            div(uk-form-custom='target: true')
-              input(type='file' name="images" multiple uk-tooltip="You can add multiple images")
-              input.uk-input.uk-form-width-medium(type='text', placeholder='Select file(s)', disabled='')
-        button.uk-button.uk-button-default Submit
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  meta(http-equiv='X-UA-Compatible' content='ie=edge')
+  title Home
+  link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css')
+  link(rel='stylesheet' href='/stylesheets/style.css')
+  style.
+    #map{
+    height: 100%;
+    width: 100%;
+    }
+.navbar.topBar
+  div
+    a
+      h1.is-size-2 Garnacheando en la CDMX
+    a.navbar-burger.burger(role='button' aria-label='menu' aria-expanded='false' data-target='navbarBasicExample')
+      span(aria-hidden='true')
+      span(aria-hidden='true')
+      span(aria-hidden='true')
+  #navbarBasicExample.navbar-menu
+    .navbar-start
+      a.navbar-item(href='/') Inicio
+      a.navbar-item(href='/products') Comidas
+      a.navbar-item(href='/products/all') Tianweros
+      a.navbar-item(href='/profile') Tu perfil
+      .navbar-end
+        .navbar-item
+          .buttons
+            a.button.is-primary(href='/auth/signup')
+              strong Registro
+            a.button.is-light(href='/auth/login') Inicia sesi&oacute;n
+            a.button.is-light.is-danger(href='/auth/logout') Salir
+div
+  .row
+    .split.left-home.column
+      h2 Info
+  .split.right-home.column
+    #map.centered
+script.
+  function initMap() {
+  //opciones
+  let options = {
+  zoom:15,
+  center: {
+  lat:19.421130000,
+  lng:-99.163280000
+  }
+  }
+  //nuevo mapa
+  let map = new google.maps.Map(
+  document.getElementById('map'), options);
+  /**
+  //nuevo marcador
+  var mark1 = {lat:19.421130000,
+  lng:-99.163280000};
+  var marker = new google.maps.Marker({position: mark1, map: map, icon:"https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"});
+  let infoWindow = new google.maps.InfoWindow({
+  content:'<h1>Puesto 1</h1>'
+  });
+  marker.addListener('click', function(){
+  infoWindow.open(map, marker);
+  });
+  */
+  //funcion para añadir marcador
+  function addMarker(properties) {
+  let marker = new google.maps.Marker({
+  position: properties.coords,
+  map: map,
+  icon:properties.iconImage
+  });
+  //checar si tiene icono
+  if(properties.iconImage) {
+  marker.setIcon(properties.iconImage);
+  }
+  //checar el contenido
+  if(properties.content) {
+  let infoWindow = new google.maps.InfoWindow({
+  content:properties.content
+  });
+  marker.addListener('click', function(){
+  infoWindow.open(map, marker);
+  });
+  }
+  }
+  //array de marcadores
+  let markers = [
+  {
+  coords:{lat:19.421130000,lng:-99.163280000},
+  iconImage:'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+  content: '<h1> Ironhack </h1>'
+  },
+  {
+  coords:{lat:19.423130000,lng:-99.164280000},
+  iconImage:'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+  content: '<h1> Puesto 2 </h1>'
+  },
+  {
+  coords:{lat:19.421130000,lng:-99.164280000},
+  iconImage:'',
+  content: '<h1> Puesto 3 </h1>'
+  }
+  ];
+  // loop para los marcadores
+  for(let i = 0; i < markers.length; i++) {
+  // añadir marcador
+  addMarker(markers[i]);
+  }
+  }
+script(async='' defer='' src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBUgrSI6gFn6ym26LSyNLv9lKGLQy4BXR4&callback=initMap')

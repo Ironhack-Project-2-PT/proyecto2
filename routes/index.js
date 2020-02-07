@@ -14,6 +14,12 @@ router.get("/home", isAuth, (req, res, next) => {
   res.render("home", { title: "Home", user });
 });
 
+
+router.get("/new", isAuth, (req, res, next) => {
+  const { user } = req;
+  res.render("newPuesto", { user });
+});
+
 router.get("/profile", isAuth, (req, res, next) => {
   const { user } = req;
  let help = {};
