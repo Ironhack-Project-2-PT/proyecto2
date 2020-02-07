@@ -5,12 +5,12 @@ const schema = require("../models/User");
 
 exports.login = (req, res) => {
     passport.authenticate("local", (err, user, info ={}) => {
-        const { message: error } = info;
+        const { message: err } = info;
         if(error) {
-            return res.render("login", { error });
+            return res.render("login", { err });
         }
 
-        req.login(user, err => {
+        req.login((user, err) => {
             res.redirect("/profile");
         });
     })(req, res);
@@ -46,7 +46,7 @@ exports.signup = (req, res) => {
             subject: "Confirm your email"
         };
         send(options);
-        req.login(usr, errorMessage => {
+        req.login((usr, errorMessage) => {
             if(errorMessage)
             return res.render("register", { title: "SignUp", errorMessage });
             res.redirect("/home");
